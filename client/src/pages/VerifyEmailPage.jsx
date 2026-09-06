@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { verifyEmail, resendVerification } from '../api/auth';
 
 export default function VerifyEmailPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();  // used to read and modify the query string ?... in a URL
   const [status, setStatus] = useState('verifying'); // verifying | success | error
   const [email, setEmail] = useState('');
   const [resendStatus, setResendStatus] = useState(''); // '', 'sending', 'sent'

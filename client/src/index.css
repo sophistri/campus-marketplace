@@ -109,3 +109,114 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ---- Auth pages (login, signup, verify email) ---- */
+
+.auth-page {
+  max-width: 400px;
+  width: 100%;
+  margin: 48px auto;
+  padding: 24px;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.auth-page h2 {
+  margin-bottom: 20px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.auth-input::placeholder {
+  color: var(--text);
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.auth-button {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.auth-button:hover {
+  opacity: 0.9;
+}
+
+.auth-error {
+  color: #ef4444;
+  font-size: 14px;
+  margin: 0;
+  text-align: left;
+}
+
+.auth-footer {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--text);
+  text-align: center;
+}
+
+.auth-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.auth-center {
+  text-align: center;
+}
+
+.auth-subtext {
+  color: var(--text);
+}
+
+ 
+.auth-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+ 
+.auth-link-button:hover {
+  text-decoration: underline;
+}
+ 
+.auth-link-button:disabled {
+  color: var(--text);
+  cursor: default;
+  text-decoration: none;
+}

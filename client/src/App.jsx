@@ -9,6 +9,7 @@ import HomePage from './pages/HomePage';
 import CreateListingPage from './pages/CreateListingPage';
 import ListingDetailPage from './pages/ListingDetailPage';
 import MyListingsPage from './pages/MyListingsPage';
+import MessagesPage from './pages/MessagesPage';
 
 export default function App() {
   return (
@@ -24,6 +25,9 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/listings/:id" element={<ListingDetailPage />} />
+            
+            <Route path="/messages" element={<MessagesPage />} />
+            
 
             <Route element={<ProtectedRoute />}>
               <Route path="/listings/new" element={<CreateListingPage />} />

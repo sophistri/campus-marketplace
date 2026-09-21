@@ -10,7 +10,7 @@ import CreateListingPage from './pages/CreateListingPage';
 import ListingDetailPage from './pages/ListingDetailPage';
 import MyListingsPage from './pages/MyListingsPage';
 import MessagesPage from './pages/MessagesPage';
-
+import FavoritesPage from './pages/FavoritesPage';
 export default function App() {
   return (
     <BrowserRouter>
@@ -30,9 +30,10 @@ export default function App() {
             
 
             <Route element={<ProtectedRoute />}>
-              <Route path="/listings/new" element={<CreateListingPage />} />
-              <Route path="/listings/mine" element={<MyListingsPage />} />
-            </Route>
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/listings/new" element={<CreateListingPage />} />
+          <Route path="/listings/mine" element={<MyListingsPage />} />
+          </Route>
           </Route>
         </Routes>
       </AuthProvider>

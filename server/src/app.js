@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import authRoutes from './routes/auth.routes.js';
 import listingsRoutes from './routes/listings.routes.js';
+import favoriteRoutes from './routes/favorite.routes.js';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use('/uploads', express.static(path.resolve('uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoutes);
+app.use('/api/favorites', favoriteRoutes);
 
 // multer errors (file too large, bad type, etc.) land here
 app.use((err, req, res, next) => {

@@ -11,6 +11,7 @@ import ListingDetailPage from './pages/ListingDetailPage';
 import MyListingsPage from './pages/MyListingsPage';
 import MessagesPage from './pages/MessagesPage';
 import FavoritesPage from './pages/FavoritesPage';
+import ProfilePage from './pages/ProfilePage';
 export default function App() {
   return (
     <BrowserRouter>
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/listings/new" element={<CreateListingPage />} />
           <Route path="/listings/mine" element={<MyListingsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           </Route>
           </Route>
         </Routes>

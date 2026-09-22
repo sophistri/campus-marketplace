@@ -94,19 +94,28 @@ export async function login(req, res) {
   await user.save();
 
   res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTS);
+
   res.json({
     accessToken,
-    user: { id: user._id, email: user.email, name: user.name, campus: user.campus },
+    user: {
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      campus: user.campus,
+      createdAt: user.createdAt,
+    },
   });
 }
 
 export async function refresh(req, res) {
   const token = req.cookies?.refreshToken;
+
   if (!token) {
     return res.status(401).json({ error: 'No refresh token provided' });
   }
 
   let payload;
+
   try {
     payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
   } catch {
@@ -114,35 +123,47 @@ export async function refresh(req, res) {
   }
 
   const user = await User.findById(payload.sub);
+
   if (!user || user.refreshTokenHash !== hashToken(token)) {
     return res.status(401).json({ error: 'Refresh token no longer valid' });
   }
 
   const accessToken = generateAccessToken(user);
+
   res.json({ accessToken });
 }
 
 export async function logout(req, res) {
   const token = req.cookies?.refreshToken;
+
   if (token) {
     try {
       const payload = jwt.decode(token);
+
       if (payload?.sub) {
-        await User.findByIdAndUpdate(payload.sub, { $unset: { refreshTokenHash: 1 } });
+        await User.findByIdAndUpdate(
+          payload.sub,
+          { $unset: { refreshTokenHash: 1 } }
+        );
       }
     } catch {
       // ignore decode errors on logout
     }
   }
+
   res.clearCookie('refreshToken', REFRESH_COOKIE_OPTS);
+
   res.json({ message: 'Logged out' });
 }
 
 export async function me(req, res) {
-  const user = await User.findById(req.userId).select('-passwordHash -refreshTokenHash');
+  const user = await User.findById(req.userId)
+    .select('-passwordHash -refreshTokenHash');
+
   if (!user) {
     return res.status(404).json({ error: 'User not found' });
   }
+
   res.json({ user });
 }
 
@@ -163,8 +184,10 @@ export async function resendVerification(req, res) {
   }
 
   const verificationToken = generateVerificationToken();
+
   user.verificationToken = verificationToken;
   user.verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000;
+
   await user.save();
 
   await sendVerificationEmail(user.email, verificationToken);

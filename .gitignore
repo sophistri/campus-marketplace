@@ -28,8 +28,8 @@ pnpm-debug.log*
 coverage/
  
 # Uploads (local dev file storage, if used before S3 is fully wired up)
-server/uploads/
-uploads/
+#server/uploads/
+#uploads/
  
 # Editor / IDE
 .vscode/

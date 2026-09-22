@@ -9,7 +9,9 @@ import HomePage from './pages/HomePage';
 import CreateListingPage from './pages/CreateListingPage';
 import ListingDetailPage from './pages/ListingDetailPage';
 import MyListingsPage from './pages/MyListingsPage';
-
+import MessagesPage from './pages/MessagesPage';
+import FavoritesPage from './pages/FavoritesPage';
+import ProfilePage from './pages/ProfilePage';
 export default function App() {
   return (
     <BrowserRouter>
@@ -24,11 +26,16 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/listings/:id" element={<ListingDetailPage />} />
+            
+            <Route path="/messages" element={<MessagesPage />} />
+            
 
             <Route element={<ProtectedRoute />}>
-              <Route path="/listings/new" element={<CreateListingPage />} />
-              <Route path="/listings/mine" element={<MyListingsPage />} />
-            </Route>
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/listings/new" element={<CreateListingPage />} />
+          <Route path="/listings/mine" element={<MyListingsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          </Route>
           </Route>
         </Routes>
       </AuthProvider>

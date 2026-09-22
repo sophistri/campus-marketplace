@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getListing, deleteListing, updateListingStatus } from '../api/listings';
+import { startConversation } from '../api/conversations';
 import { useAuth } from '../hooks/useAuth';
 
 export default function ListingDetailPage() {
@@ -26,6 +27,15 @@ export default function ListingDetailPage() {
     if (!confirm('Delete this listing? This cannot be undone.')) return;
     await deleteListing(id);
     navigate('/');
+  };
+
+  const handleMessageSeller = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    const conversation = await startConversation(listing._id);
+    navigate(`/messages?conversation=${conversation._id}`);
   };
 
   const handleMarkSold = async () => {
@@ -66,7 +76,7 @@ export default function ListingDetailPage() {
             <button onClick={handleDelete} className="auth-link-button">Delete listing</button>
           </div>
         ) : (
-          <button className="auth-button">Message seller</button>
+          <button onClick={handleMessageSeller} className="auth-button">Message seller</button>
         )}
       </div>
     </div>

@@ -59,20 +59,7 @@ export default function ProfilePage() {
 
           <div className="profile-details">
             <div className="profile-field">
-              <span className="profile-label">Email verification</span>
-
-              <span
-                className={
-                  user.isVerified ? 'verified' : 'not-verified'
-                }
-              >
-                {user.isVerified ? '✓ Verified' : 'Not verified'}
-              </span>
-            </div>
-
-            <div className="profile-field">
               <span className="profile-label">Member since</span>
-
               <span>
                 {user.createdAt
                   ? new Date(user.createdAt).toLocaleDateString('en-IN', {

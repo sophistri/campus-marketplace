@@ -1,4 +1,5 @@
 import Listing from '../models/Listing.js';
+import { deleteListingPhotos } from '../utils/fileCleanup.js';
 
 export async function createListing(req, res) {
   const { title, description, price, category, condition, location } = req.body;
@@ -112,6 +113,7 @@ export async function deleteListing(req, res) {
     return res.status(403).json({ error: 'You can only delete your own listings' });
   }
 
+  await deleteListingPhotos(listing.photos);
   await listing.deleteOne();
   res.json({ message: 'Listing deleted' });
 }

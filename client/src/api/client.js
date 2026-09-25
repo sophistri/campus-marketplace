@@ -10,11 +10,15 @@ export function getAccessToken() {
   return accessToken;
 }
 
+// Creates a pre-configured axios instance so that we dont have to keep typing out the base url and stuff 
+// withCredentials: true ensures the httpOnly refresh-token cookie is sent with every request automatically
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true, // sends the httpOnly refresh cookie
 });
 
+// Runs before every outgoing request
+// decides whether a request goes out unauthenticated or not
 client.interceptors.request.use((config) => {
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
@@ -22,6 +26,7 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
+// so that all faileds reqs await the same refresh
 let refreshPromise = null;
 
 // endpoints that should NEVER trigger an automatic refresh-and-retry,
@@ -32,6 +37,7 @@ function isAuthEndpoint(url = '') {
   return AUTH_ENDPOINTS.some((path) => url.includes(path));
 }
 
+// for auto refresh on failed req
 client.interceptors.response.use(
   (response) => response,
   async (error) => {

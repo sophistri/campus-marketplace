@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
+import { AdminRoute } from './components/layout/AdminRoute';
 import Layout from './components/layout/Layout';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -12,6 +13,7 @@ import MyListingsPage from './pages/MyListingsPage';
 import MessagesPage from './pages/MessagesPage';
 import FavoritesPage from './pages/FavoritesPage';
 import ProfilePage from './pages/ProfilePage';
+import AdminPage from './pages/AdminPage';
 export default function App() {
   return (
     <BrowserRouter>
@@ -27,15 +29,17 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/listings/:id" element={<ListingDetailPage />} />
             
-            <Route path="/messages" element={<MessagesPage />} />
-            
-
             <Route element={<ProtectedRoute />}>
+          <Route path="/messages" element={<MessagesPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/listings/new" element={<CreateListingPage />} />
           <Route path="/listings/mine" element={<MyListingsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           </Route>
+
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminPage />} />
+            </Route>
           </Route>
         </Routes>
       </AuthProvider>

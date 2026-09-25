@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   avatarUrl: String,
   campus: String,
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  isSuspended: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: false },
   verificationToken: String,
   verificationTokenExpires: Date,

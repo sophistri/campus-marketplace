@@ -2,6 +2,8 @@ import Conversation from '../models/Conversation.js';
 import Message from '../models/Message.js';
 import Listing from '../models/Listing.js';
 
+import jwt from 'jsonwebtoken';
+
 // GET /api/conversations — all conversations the logged-in user is part of
 export async function getConversations(req, res) {
   const conversations = await Conversation.find({

@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import {
   hashPassword,
@@ -87,6 +88,10 @@ export async function login(req, res) {
     return res.status(403).json({ error: 'Please verify your email before logging in' });
   }
 
+  if (user.isSuspended) {
+    return res.status(403).json({ error: 'This account has been suspended. Contact support.' });
+  }
+
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
@@ -102,6 +107,7 @@ export async function login(req, res) {
       email: user.email,
       name: user.name,
       campus: user.campus,
+      role: user.role,
       createdAt: user.createdAt,
     },
   });

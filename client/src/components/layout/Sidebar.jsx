@@ -40,6 +40,11 @@ export default function Sidebar() {
             Profile
           </NavLink>
         )}
+        {user?.role === 'admin' && (
+          <NavLink to="/admin" className={navLinkClass}>
+            Admin
+          </NavLink>
+        )}
       </nav>
 
       <div className="sidebar-footer">

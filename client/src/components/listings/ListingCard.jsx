@@ -7,6 +7,8 @@ import {
   removeFavorite,
 } from '../../api/favorites';
 
+import { API_URL } from "../../config.ts";
+
 export default function ListingCard({
   listing,
   initiallyFavorite = false,
@@ -37,7 +39,7 @@ export default function ListingCard({
 }, [user, listing._id, initiallyFavorite]);
 
   const thumbnail = listing.photos?.[0];
-  const apiOrigin = import.meta.env.VITE_API_URL.replace('/api', '');
+  const apiOrigin = API_URL.replace('/api', '');
 
   const handleFavorite = async (event) => {
     event.preventDefault();

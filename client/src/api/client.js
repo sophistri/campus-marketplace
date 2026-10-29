@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_URL } from '../config.ts';
 
 let accessToken = null;
 
@@ -13,7 +14,7 @@ export function getAccessToken() {
 // Creates a pre-configured axios instance so that we dont have to keep typing out the base url and stuff 
 // withCredentials: true ensures the httpOnly refresh-token cookie is sent with every request automatically
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: API_URL,
   withCredentials: true, // sends the httpOnly refresh cookie
 });
 
@@ -54,7 +55,7 @@ client.interceptors.response.use(
         if (!refreshPromise) {
           refreshPromise = axios
             .post(
-              `${import.meta.env.VITE_API_URL}/auth/refresh`,
+              `${API_URL}/auth/refresh`,
               {},
               { withCredentials: true }
             )

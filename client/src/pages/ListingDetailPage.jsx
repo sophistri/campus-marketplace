@@ -4,13 +4,15 @@ import { getListing, deleteListing, updateListingStatus } from '../api/listings'
 import { startConversation } from '../api/conversations';
 import { useAuth } from '../hooks/useAuth';
 
+import { API_URL } from '../config.ts';
+
 export default function ListingDetailPage() {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
-  const apiOrigin = import.meta.env.VITE_API_URL.replace('/api', '');
+  const apiOrigin = API_URL.replace('/api', '');
 
   useEffect(() => {
     getListing(id)

@@ -1,20 +1,59 @@
 import Listing from '../models/Listing.js';
 import { deleteListingPhotos } from '../utils/fileCleanup.js';
 
+
+const CATEGORIES = Listing.schema.path('category').enumValues;
+const CONDITIONS = Listing.schema.path('condition').enumValues;
+
+const photoUrls = (files = []) => files.map((file) => `/uploads/listingss/${file.filename}`);
+
+// lets parse the input stuff and validate. yayyyyyyyy
+function parsePrice(value){
+  if (typeof value !== 'string' && typeof value!== 'number') return null;
+  if (value === '') return null;
+
+  const n = Number(value);
+  return Number.isFinite(n) && n>=0 ? n : null;
+}
+
+function listingFieldError({title, description, price, category, condition, location}){
+  for (const text of [title, description, location]){
+    if (text !== undefined && typeof text !== 'string'){
+      return 'title, description and loca must be text';
+    }
+  }
+  if (price !== undefined && parsePrice(price) === null){
+    return 'price must be a number greater than zero. dont sell free stuff, thats a scam';
+  }
+  if (category !== undefined && !CATEGORIES.includes(category)){
+    return `category must be one of these: ${CATEGORIES.join(', ')}`;
+  }
+  return null;
+}
+
 export async function createListing(req, res) {
   const { title, description, price, category, condition, location } = req.body;
+  const photos = photoUrls(req.files);
 
-  if (!title || !price || !category || !condition) {
-    return res.status(400).json({ error: 'title, price, category, and condition are required' });
+  // if a reqq has been rejected, then del the saved photos
+  const reject = async(message) => {
+    await deleteListingPhotos(photos);
+    return res.status(400).json({ error: message });
+  };
+
+  /// alllll the reasons to reject a request
+  if (!title || price === undefined || price === '' || !category || !condition){
+    return reject('title, price, category and condition are required fields');
   }
+  const fieldError = listingFieldError(req.body);
+  if (fieldError) return reject(fieldError);
 
-  const photos = (req.files || []).map((file) => `/uploads/listings/${file.filename}`);
-
+  // passed the tests so create yada yada
   const listing = await Listing.create({
     seller: req.userId,
     title,
     description,
-    price,
+    price: parsePrice(price),
     category,
     condition,
     location,
@@ -25,15 +64,28 @@ export async function createListing(req, res) {
 }
 
 export async function getListings(req, res) {
-  const { category, condition, minPrice, maxPrice, q, sort, page = 1, limit = 20 } = req.query;
+  
+  const QUERY_PARAMS = ['category', 'condition', 'minPrice', 'maxPrice', 'q', 'sort', 'page', 'limit'];
+  for (const key of QUERY_PARAMS){
+    if (req.query[key] !== undefine && typeof req.query[key] !== 'string'){
+      return res.status(400).json({ error: `Invalid ${key} parameter` });
+    }
+  }
+  const { category, condition, minPrice, maxPrice, q, sort, page, limit } = req.query;
 
   const filter = { status: 'active' };
   if (category) filter.category = category;
   if (condition) filter.condition = condition;
-  if (minPrice || maxPrice) {
+
+  const min = minPrice ? Number(minPrice) : undefined;
+  const max = maxPrice ? Number(maxPrice) : undefined;
+  if (Number.isNaN(min) || Number.isNaN(max)){
+    return res.status(400).json({ error: 'minPPrice and maxPrice must be numbers' });
+  }
+  if (min !== undefined || max !== undefined) {
     filter.price = {};
-    if (minPrice) filter.price.$gte = Number(minPrice);
-    if (maxPrice) filter.price.$lte = Number(maxPrice);
+    if (min !== undefined) filter.price.$gte = min;
+    if (max !== undefined) filter.price.$lte = max;
   }
   if (q) {
     filter.$text = { $search: q };
@@ -44,10 +96,11 @@ export async function getListings(req, res) {
     price_asc: { price: 1 },
     price_desc: { price: -1 },
   };
-  const sortBy = sortOptions[sort] || sortOptions.newest;
+  const sortBy = Object.hasOwn(sortOptions, sort) ? sortOptions[sort] : sortOptions.newest;
 
-  const pageNum = Math.max(Number(page), 1);
-  const limitNum = Math.min(Number(limit), 50);
+  // garbage vals will fall back to defaults instead of becoming NaN
+  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+  const limitNum = Math.min(Math.max(parseInt(limit, 10) || 20, 1), 50);
 
   const [listings, total] = await Promise.all([
     Listing.find(filter)
@@ -87,17 +140,23 @@ export async function updateListing(req, res) {
   }
 
   const { title, description, price, category, condition, location } = req.body;
+
+  const fieldError = listingFieldError(req.body);
+  if (fieldError){
+    await deleteListingPhotos(photoUrls(req.files));
+    return res.status(400).json({ error: fieldError});
+  }
+  
   if (title !== undefined) listing.title = title;
   if (description !== undefined) listing.description = description;
-  if (price !== undefined) listing.price = price;
+  if (price !== undefined) listing.price = parsePrice(price);
   if (category !== undefined) listing.category = category;
   if (condition !== undefined) listing.condition = condition;
   if (location !== undefined) listing.location = location;
 
   // if new photos were uploaded, append them (keeps existing ones)
   if (req.files?.length) {
-    const newPhotos = req.files.map((file) => `/uploads/listings/${file.filename}`);
-    listing.photos.push(...newPhotos);
+    listing.photos.push(...photoUrls(req.files));
   }
 
   await listing.save();

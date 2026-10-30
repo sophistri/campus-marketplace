@@ -11,8 +11,11 @@ import {
 } from '../controllers/admin.controller.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { requireAdmin } from '../middleware/requireAdmin.js';
+import { validateObjectIdParam } from '../middleware/validateObjectId.js';
 
 const router = Router();
+router.param('id', validateObjectIdParam); // malformed ids get a 400 before any controller runs
+
 
 // every admin route requires both: a valid login AND the admin role
 router.use(authenticate, requireAdmin);

@@ -3,6 +3,7 @@ import Message from '../models/Message.js';
 import Listing from '../models/Listing.js';
 
 import jwt from 'jsonwebtoken';
+import { isObjectId } from '../middleware/validateObjectId.js';
 
 // GET /api/conversations — all conversations the logged-in user is part of
 export async function getConversations(req, res) {
@@ -41,6 +42,12 @@ export async function getConversations(req, res) {
 export async function startConversation(req, res) {
   const { listingId } = req.body;
 
+  // first check if the id is valid
+  if (!isObjectId(listingId)){
+    return res.status(400).json({ error: 'Not a valid Listing Id. Maybe get your head checked' });
+  }
+
+  // then check whether it exists in db
   const listing = await Listing.findById(listingId);
   if (!listing) {
     return res.status(404).json({ error: 'Listing not found' });

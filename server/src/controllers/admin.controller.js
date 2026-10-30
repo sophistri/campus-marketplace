@@ -31,7 +31,10 @@ export async function setUserSuspension(req, res) {
     return res.status(400).json({ error: "You can't suspend your own account" });
   }
 
+  // now to the actual suspending
+
   user.isSuspended = suspended;
+  if (suspended) user.refreshTokenHash = undefined; // refresh access REVOKED (or atleast they cant get a new access token)
   await user.save();
 
   res.json({ user: { id: user._id, email: user.email, isSuspended: user.isSuspended } });

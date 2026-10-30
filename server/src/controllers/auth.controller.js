@@ -137,6 +137,11 @@ export async function refresh(req, res) {
     return res.status(401).json({ error: 'Refresh token no longer valid' });
   }
 
+  if (user.isSuspended){
+    res.clearCookie('refreshToken', REFRESH_COOKIE_OPTS);;
+    return res.status(403).json({ error: 'This account has been SUSPENDED. You know what you did, you meaner =(' })
+  }
+
   // if you got till here then the refresh token does indeed exist so regen the access token and save that again
 
   const accessToken = generateAccessToken(user);

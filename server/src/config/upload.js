@@ -3,6 +3,15 @@ import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
 
+
+// the only types of extensions to accept
+const EXTENSIONS = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'image/gif': '.gif',
+}
+
 const uploadDir = path.resolve('uploads/listings');
 
 // make sure the folder exists on startup
@@ -11,15 +20,14 @@ fs.mkdirSync(uploadDir, { recursive: true });
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
+    const ext = EXTENSIONS[file.mimetype];
     const uniqueName = `${crypto.randomUUID()}${ext}`;
     cb(null, uniqueName);
   },
 });
 
 function fileFilter(req, file, cb) {
-  const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-  if (!allowed.includes(file.mimetype)) {
+  if (!Object.hasOwn(EXTENSIONS, file.mimetype)) {
     return cb(new Error('Only JPEG, PNG, WEBP, or GIF images are allowed'));
   }
   cb(null, true);

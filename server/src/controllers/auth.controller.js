@@ -9,6 +9,7 @@ import {
   generateVerificationToken,
 } from '../services/auth.service.js';
 import { sendVerificationEmail } from '../services/email.service.js';
+import { toPublicUser } from '../utils/serializeUser.js';
 
 const REFRESH_COOKIE_OPTS = {
   httpOnly: true,
@@ -72,7 +73,10 @@ export async function verifyEmail(req, res) {
 }
 
 export async function login(req, res) {
+  // get the email and pass theyre logging in with
   const { email, password } = req.body;
+
+  // validate it, return error and why if not
 
   const user = await User.findOne({ email });
   if (!user) {
@@ -92,28 +96,27 @@ export async function login(req, res) {
     return res.status(403).json({ error: 'This account has been suspended. Contact support.' });
   }
 
+  // email passed all checks so generate the access token
+
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
+  
+  //save the refresh token to db  (will be cleared on logout or suspension)
   user.refreshTokenHash = hashToken(refreshToken);
   await user.save();
 
+  //save the refresh token to a cookie
   res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTS);
 
-  res.json({
-    accessToken,
-    user: {
-      id: user._id,
-      email: user.email,
-      name: user.name,
-      campus: user.campus,
-      role: user.role,
-      createdAt: user.createdAt,
-    },
-  });
+  // put the access token in the json bod ie react memory -- onlylasts 15 mins tho
+  res.json({ accessToken, user: toPublicUser(user) });
 }
 
 export async function refresh(req, res) {
+
+  // on each page refresh, gotta verify whether the refresh token is still valid -- usually expires after 7 days
+
   const token = req.cookies?.refreshToken;
 
   if (!token) {
@@ -134,12 +137,17 @@ export async function refresh(req, res) {
     return res.status(401).json({ error: 'Refresh token no longer valid' });
   }
 
+  // if you got till here then the refresh token does indeed exist so regen the access token and save that again
+
   const accessToken = generateAccessToken(user);
 
   res.json({ accessToken });
 }
 
 export async function logout(req, res) {
+
+  // clear the refresh token from cookie and db on logout
+
   const token = req.cookies?.refreshToken;
 
   if (token) {
@@ -163,14 +171,16 @@ export async function logout(req, res) {
 }
 
 export async function me(req, res) {
-  const user = await User.findById(req.userId)
-    .select('-passwordHash -refreshTokenHash');
+
+  // all this really does is get the user details of the currently logged in user
+
+  const user = await User.findById(req.userId);
 
   if (!user) {
     return res.status(404).json({ error: 'User not found' });
   }
 
-  res.json({ user });
+  res.json({ user: toPublicUser(user) });
 }
 
 export async function resendVerification(req, res) {
@@ -182,7 +192,7 @@ export async function resendVerification(req, res) {
 
   const user = await User.findOne({ email });
 
-  // don't reveal whether the account exists — same response either way
+  // don't reveal whether the account exists - same response either way
   if (!user || user.isVerified) {
     return res.json({
       message: 'If an unverified account exists for that email, a new link has been sent.',

@@ -23,7 +23,8 @@ export async function signup(req, res) {
 
   const allowedDomains = (process.env.ALLOWED_EMAIL_DOMAINS || '')
     .split(',')
-    .map((d) => d.trim().toLowerCase());
+    .map((d) => d.trim().toLowerCase())
+    .filter(Boolean); // so it ignores any case of empty strings
   const domain = email.split('@')[1]?.toLowerCase();
 
   if (allowedDomains.length && !allowedDomains.includes(domain)) {

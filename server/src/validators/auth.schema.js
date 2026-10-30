@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+
+// used to validate and verify whether the json body was formed correctly
+
 export const signupSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -10,4 +13,12 @@ export const signupSchema = z.object({
 export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
+});
+
+export const verifyEmailSchema = z.object({
+  token: z.string().min(1),
+});
+
+export const resendVerificationSchema = z.object({
+  email: z.string().email(),
 });

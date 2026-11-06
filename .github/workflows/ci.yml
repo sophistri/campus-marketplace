@@ -26,20 +26,20 @@ jobs:
       - run: npm run lint
       - run: npm run build
 
-    server:
-      name: Server 
-      runs-on: ubuntu-latest
-      defaults:
-        run:
-          working-directory: server 
-        steps:
-          - uses: actions/checkout@v4
-          - uses: actions/setup-node@v4
-            with: 
-              node-version: 20
-              cache: npm   # caches everything in ~/.npm
-            # uses this key to access the cache, key is based on contents of package-lock
-            # therefore cache key changes when package-lock changes. new dependencies => new cache
-            cache-dependency-path: server/package-lock.json
-          - run: npm ci
-          
+  server:
+    name: Server 
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server 
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: 
+          node-version: 20
+          cache: npm   # caches everything in ~/.npm
+          # uses this key to access the cache, key is based on contents of package-lock
+          # therefore cache key changes when package-lock changes. new dependencies => new cache
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+        

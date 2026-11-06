@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -8,7 +9,7 @@ import favoriteRoutes from './routes/favorite.routes.js';
 import conversationsRoutes from './routes/conversations.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 
-import 'express-async-errors';
+
 
 const app = express();
 

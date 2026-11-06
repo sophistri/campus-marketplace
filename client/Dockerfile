@@ -1,5 +1,5 @@
 # take 1
-FROM node:lts-slim AS build
+FROM node:24-slim AS build
 WORKDIR /app
 
 # 1. Copy only package files first to leverage build cache
@@ -16,7 +16,7 @@ RUN npm run build
 
 
 # take 2
-FROM nginx:alpine AS prod
+FROM nginx:1.31-alpine3.24 AS prod
 
 # Replace the default Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf

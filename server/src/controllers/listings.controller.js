@@ -5,7 +5,7 @@ import { deleteListingPhotos } from '../utils/fileCleanup.js';
 const CATEGORIES = Listing.schema.path('category').enumValues;
 const CONDITIONS = Listing.schema.path('condition').enumValues;
 
-const photoUrls = (files = []) => files.map((file) => `/uploads/listingss/${file.filename}`);
+const photoUrls = (files = []) => files.map((file) => `/uploads/listings/${file.filename}`);
 
 // lets parse the input stuff and validate. yayyyyyyyy
 function parsePrice(value){
@@ -34,6 +34,10 @@ function listingFieldError({title, description, price, category, condition, loca
 export async function createListing(req, res) {
   const { title, description, price, category, condition, location } = req.body;
   const photos = photoUrls(req.files);
+
+
+  // Multer runs before your controller and has already written the photos to disk. 
+  // If the request is then rejected, those files would be orphaned forever, so reject deletes them first.
 
   // if a reqq has been rejected, then del the saved photos
   const reject = async(message) => {
@@ -67,7 +71,7 @@ export async function getListings(req, res) {
   
   const QUERY_PARAMS = ['category', 'condition', 'minPrice', 'maxPrice', 'q', 'sort', 'page', 'limit'];
   for (const key of QUERY_PARAMS){
-    if (req.query[key] !== undefine && typeof req.query[key] !== 'string'){
+    if (req.query[key] !== undefined && typeof req.query[key] !== 'string'){
       return res.status(400).json({ error: `Invalid ${key} parameter` });
     }
   }
@@ -96,6 +100,7 @@ export async function getListings(req, res) {
     price_asc: { price: 1 },
     price_desc: { price: -1 },
   };
+  // hasOwn make it so that only sortOptions are used
   const sortBy = Object.hasOwn(sortOptions, sort) ? sortOptions[sort] : sortOptions.newest;
 
   // garbage vals will fall back to defaults instead of becoming NaN

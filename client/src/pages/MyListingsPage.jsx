@@ -6,10 +6,6 @@ export default function MyListingsPage() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadListings();
-  }, []);
-
   const loadListings = () => {
     setLoading(true);
     getMyListings()
@@ -27,6 +23,10 @@ export default function MyListingsPage() {
     await deleteListing(id);
     loadListings();
   };
+
+  useEffect(() => {
+    loadListings();
+  }, []);
 
   if (loading) return <p className="auth-subtext page-container">Loading...</p>;
 

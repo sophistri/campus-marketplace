@@ -72,11 +72,12 @@ function UsersTab() {
   const [loading, setLoading] = useState(true);
 
   const load = () => {
-    setLoading(true);
-    getUsers().then(setUsers).finally(() => setLoading(false));
+    getUsers()
+    .then(setUsers)
+    .finally(() => setLoading(false));
   };
 
-  useEffect(load, []);
+  useEffect( () => { load(); }, []);
 
   const handleToggleSuspend = async (user) => {
     await setUserSuspension(user._id, !user.isSuspended);
@@ -128,11 +129,12 @@ function ListingsTab() {
   const [loading, setLoading] = useState(true);
 
   const load = () => {
-    setLoading(true);
-    getAllListings().then(setListings).finally(() => setLoading(false));
+    getAllListings()
+    .then(setListings)
+    .finally(() => setLoading(false));
   };
 
-  useEffect(load, []);
+  useEffect( () => { load(); }, []);
 
   const handleRemove = async (id) => {
     await forceUpdateListingStatus(id, 'removed');
@@ -191,11 +193,12 @@ function ReportsTab() {
   const [loading, setLoading] = useState(true);
 
   const load = () => {
-    setLoading(true);
-    getReports().then(setReports).finally(() => setLoading(false));
+    getReports()
+    .then(setReports)
+    .finally(() => setLoading(false));
   };
 
-  useEffect(load, []);
+  useEffect( () => { load(); }, []);
 
   const handleResolve = async (id, status) => {
     await updateReportStatus(id, status);

@@ -11,17 +11,29 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
+    
+    // using this variable so that slow requests dont replace the new requests.
+    // an old request's ignore is automatically set to true by the return cleanup
+    let ignore = false; // so that each call gets its own variable
+
     const timeout = setTimeout(() => {
+      setLoading(true);
       getListings({ ...filters, page: 1 })
         .then((data) => {
-          setListings(data.listings);
-          setPagination(data.pagination);
+          if (!ignore){
+            setListings(data.listings);
+            setPagination(data.pagination);
+          }
         })
-        .finally(() => setLoading(false));
+        .finally(() => { 
+          if (!ignore){setLoading(false)} 
+        });
     }, 300); // debounce search typing
 
-    return () => clearTimeout(timeout);
+    return () => {
+      ignore = true;
+      clearTimeout(timeout);
+    }
   }, [filters]);
 
   const loadPage = (page) => {

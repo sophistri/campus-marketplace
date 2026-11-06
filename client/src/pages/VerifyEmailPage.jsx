@@ -3,11 +3,16 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { verifyEmail, resendVerification } from '../api/auth';
 
 export default function VerifyEmailPage() {
+
+  const token = searchParams.get('token');
+
+  
   const [searchParams] = useSearchParams();  // used to read and modify the query string ?... in a URL
-  const [status, setStatus] = useState('verifying'); // verifying | success | error
+  const [status, setStatus] = useState(token ? 'verifying' : 'error'); // verifying | success | error
   const [email, setEmail] = useState('');
   const [resendStatus, setResendStatus] = useState(''); // '', 'sending', 'sent'
   const hasRun = useRef(false);
+
 
   useEffect(() => {
     // React 18 StrictMode double-invokes effects in dev; since the
@@ -16,15 +21,14 @@ export default function VerifyEmailPage() {
     if (hasRun.current) return;
     hasRun.current = true;
 
-    const token = searchParams.get('token');
     if (!token) {
-      setStatus('error');
       return;
     }
+
     verifyEmail(token)
       .then(() => setStatus('success'))
       .catch(() => setStatus('error'));
-  }, [searchParams]);
+  }, [token]);
 
   const handleResend = async (e) => {
     e.preventDefault();

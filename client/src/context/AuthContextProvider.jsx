@@ -1,7 +1,5 @@
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { login as loginApi, logout as logoutApi, fetchMe, tryRefresh } from '../api/auth';
-
-export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);

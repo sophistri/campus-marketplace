@@ -7,7 +7,6 @@ export default function MyListingsPage() {
   const [loading, setLoading] = useState(true);
 
   const loadListings = () => {
-    setLoading(true);
     getMyListings()
       .then(setListings)
       .finally(() => setLoading(false));
@@ -15,12 +14,14 @@ export default function MyListingsPage() {
 
   const handleMarkSold = async (id) => {
     await updateListingStatus(id, 'sold');
+    setLoading(true);
     loadListings();
   };
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this listing? This cannot be undone.')) return;
     await deleteListing(id);
+    setLoading(true);
     loadListings();
   };
 

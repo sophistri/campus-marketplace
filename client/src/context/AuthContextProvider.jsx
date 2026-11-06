@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { login as loginApi, logout as logoutApi, fetchMe, tryRefresh } from '../api/auth';
+import { AuthContext } from './AuthContextObject';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -32,8 +33,8 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContextProvider.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
-    </AuthContextProvider.Provider>
+    </AuthContext.Provider>
   );
 }
